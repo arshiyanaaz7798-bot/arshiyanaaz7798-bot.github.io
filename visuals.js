@@ -99,7 +99,7 @@
     }
     new ResizeObserver(resize).observe(host); resize();
 
-    const still = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const still = false;
     earth.rotation.y = 0.15; let t = 0;
     (function loop() {
       t += 0.016;
