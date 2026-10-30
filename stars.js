@@ -1,7 +1,7 @@
 /* Glowing, NASA-style star field: twinkling stars joined into constellation-like networks */
 (function () {
   const cv = document.getElementById('starfield'); if (!cv) return;
-  const g = cv.getContext('2d'), still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const g = cv.getContext('2d'), still = false;
   let W, H, S = [], dpr = Math.min(devicePixelRatio || 1, 2), mx = -999, my = -999;
   const tint = ['#ffffff', '#cfe6ff', '#9fd0ff', '#ffe9c8'];
   function build() {
