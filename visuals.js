@@ -168,5 +168,18 @@
     });
   }
 
-  initGlobe(); initImagery(); initIcons();
+  /* ---------- 4. World-map dot pulse (runs from JavaScript so it also works on phones) ---------- */
+  function initPulse() {
+    const pin = document.querySelector('.mini-map-art.world .pin');
+    if (!pin || !pin.animate) return;
+    const ring = document.createElement('i');
+    ring.style.cssText = 'position:absolute;left:50%;top:50%;width:14px;height:14px;margin:-7px 0 0 -7px;border-radius:50%;border:2px solid #5ce7c0;pointer-events:none;';
+    pin.appendChild(ring);
+    ring.animate(
+      [{ transform: 'scale(1)', opacity: 0.9 }, { transform: 'scale(4)', opacity: 0 }],
+      { duration: 2000, iterations: Infinity, easing: 'ease-out' }
+    );
+  }
+
+  initGlobe(); initImagery(); initIcons(); initPulse();
 })();
