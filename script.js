@@ -17,7 +17,7 @@ document.getElementById('themeToggle')?.addEventListener('click', () => {
 });
 document.getElementById('year').textContent = new Date().getFullYear();
 
-// Leaflet interactive map. Uses OpenStreetMap tiles and a demo marker in Bengaluru.
+// Leaflet interactive map. Uses OpenStreetMap tiles and a marker in Bengaluru.
 if (window.L && document.getElementById('map')) {
   const map = L.map('map', { scrollWheelZoom: false }).setView([12.9716, 77.5946], 10);
   const street = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -28,7 +28,7 @@ if (window.L && document.getElementById('map')) {
   });
   street.addTo(map);
   L.control.layers({ 'Street map': street, 'Satellite imagery': satellite }, null, { collapsed: false }).addTo(map);
-  const marker = L.marker([12.9716, 77.5946]).addTo(map).bindPopup('<strong>Sample map location</strong><br>Bengaluru, Karnataka<br><small>Replace this marker with your study area.</small>');
+  const marker = L.marker([12.9716, 77.5946]).addTo(map).bindPopup('<strong>Bengaluru, Karnataka</strong><br><small>Switch to satellite imagery using the layer control.</small>');
   marker.openPopup();
   map.on('mousemove', event => {
     const lat = event.latlng.lat.toFixed(4), lng = event.latlng.lng.toFixed(4);
@@ -40,15 +40,45 @@ if (window.L && document.getElementById('map')) {
   if (mapElement) mapElement.innerHTML = '<p style="padding:20px;color:#234">The map library could not load. Check your internet connection and reload the page.</p>';
 }
 
-// Contact form prepares an email in the visitor's default email application; no server is required.
-document.getElementById('contactForm')?.addEventListener('submit', event => {
+// Contact form: sends the message through Formspree.
+// Paste your own Formspree link below (it looks like https://formspree.io/f/abcdwxyz).
+const FORMSPREE_URL = 'https://formspree.io/f/YOUR_FORM_ID';
+
+document.getElementById('contactForm')?.addEventListener('submit', async event => {
   event.preventDefault();
-  const data = new FormData(event.currentTarget);
+  const form = event.currentTarget;
+  const hint = document.getElementById('formHint');
+  const button = form.querySelector('button[type="submit"]');
+  const data = new FormData(form);
   const name = String(data.get('name') || '').trim();
   const senderEmail = String(data.get('email') || '').trim();
   const message = String(data.get('message') || '').trim();
-  const subject = encodeURIComponent(`Portfolio enquiry from ${name}`);
-  const body = encodeURIComponent(`Hi Arshiya,\n\n${message}\n\nFrom: ${name}\nReply email: ${senderEmail}`);
-  document.getElementById('formHint').textContent = 'Your email app should open with the message prepared. Please review and send it there.';
-  window.location.href = `mailto:arshiyanaaz7798@gmail.com?subject=${subject}&body=${body}`;
+
+  // Fallback: if the Formspree link has not been added yet, open the visitor's email app instead.
+  if (FORMSPREE_URL.includes('YOUR_FORM_ID')) {
+    const subject = encodeURIComponent(`Portfolio enquiry from ${name}`);
+    const body = encodeURIComponent(`Hi Arshiya,\n\n${message}\n\nFrom: ${name}\nReply email: ${senderEmail}`);
+    hint.textContent = 'Your email app should open with the message prepared. Please review and send it there.';
+    window.location.href = `mailto:arshiyanaaz7798@gmail.com?subject=${subject}&body=${body}`;
+    return;
+  }
+
+  button.disabled = true;
+  hint.textContent = 'Sending...';
+  try {
+    const response = await fetch(FORMSPREE_URL, {
+      method: 'POST',
+      headers: { 'Accept': 'application/json' },
+      body: data
+    });
+    if (response.ok) {
+      form.reset();
+      hint.textContent = 'Thank you! Your message has been sent. I will reply to you soon.';
+    } else {
+      hint.textContent = 'Sorry, the message could not be sent. Please email me directly at arshiyanaaz7798@gmail.com.';
+    }
+  } catch (error) {
+    hint.textContent = 'Sorry, something went wrong. Please email me directly at arshiyanaaz7798@gmail.com.';
+  }
+  button.disabled = false;
 });
