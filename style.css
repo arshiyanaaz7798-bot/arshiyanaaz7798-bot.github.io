@@ -86,3 +86,6 @@
 
 /* v9 keep overall logo size unchanged */
 .lrow{height:17px;gap:6px}.lrow em{font-size:17px}.lrow s{font-size:8px}.ob{height:14px!important;max-width:70px!important}
+
+/* force pulse animation on phones */
+.mini-map-art.world .pin:after{animation:pulse 2s ease-out infinite!important}
